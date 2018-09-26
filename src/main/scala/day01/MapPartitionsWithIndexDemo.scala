@@ -1,3 +1,6 @@
+package day01
+
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
@@ -9,7 +12,7 @@ object MapPartitionsWithIndexDemo {
     val conf = new SparkConf().setAppName("MapPartitionsWithIndexDemo")
     conf.setMaster("local[*]")
     val sc = new SparkContext(conf)
-
+    Logger.getLogger("org.apache.spark").setLevel(Level.OFF)
     val rdd = sc.makeRDD(List(12,3,4,5,6,4),2)
 
     // 定义一个函数，返回rdd中的数据，以及对应的分区编号
@@ -18,6 +21,7 @@ object MapPartitionsWithIndexDemo {
     }
 
     val rdd2 = rdd.mapPartitionsWithIndex(f)
+
     rdd2.collect().toBuffer.foreach(println)
     sc.stop()
 

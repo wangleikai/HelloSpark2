@@ -1,5 +1,7 @@
+package day01
+
 import org.apache.spark.rdd.RDD
-import org.apache.spark.{Partitioner, SparkConf, SparkContext}
+import org.apache.spark.{SparkConf, SparkContext}
 
 /**
   * @author WangLeiKai

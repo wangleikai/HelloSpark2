@@ -1,3 +1,5 @@
+package day01
+
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**

@@ -1,3 +1,5 @@
+package day01
+
 import java.net.URL
 
 import org.apache.spark.SparkContext
