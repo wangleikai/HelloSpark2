@@ -15,10 +15,11 @@ object JdbcRDDDemo {
     val sc = new SparkContext(conf)
     val getConn =() => DriverManager.getConnection("jdbc:mysql://localhost:3306/user?characterEncoding=UTF-8","root","root")
     val rdd = new JdbcRDD(
-      sc, getConn, "select * from access_log where num >= ? and num <= ?", 125, 1825, 1,
+      //注意  不能使用小于或者大于   会将分区中的最后一个元素删除
+      sc, getConn, "select * from access_log where id >= ? and id <= ?", 1, 5, 2,
       rs => {
-      val province = rs.getString(1)
-      val num = rs.getInt(2)
+      val province = rs.getString(2)
+      val num = rs.getInt(3)
       (province,num)
     }
     )

@@ -20,7 +20,7 @@ object FavSubTeacher3 {
 
     val lines: RDD[String] = sc.textFile("F:\\上课画图\\spark 02\\课件与代码\\teacher(1).log")
 //    val subjects = Array("bigdata", "javaee", "php")
-    sc.setCheckpointDir("hdfs://hadoop-master:9000/ck")
+
     val subjectAndTeacher: RDD[((String, String), Int)] = lines.map(line => {
       val teacher: String = line.substring(line.lastIndexOf("/") + 1)
       val host = new URL(line).getHost
@@ -39,14 +39,16 @@ object FavSubTeacher3 {
 
     //val partitioned: RDD[((String, String), Int)] = reduced.partitionBy(sbPartitioner)
 
-    reduced.checkpoint()
+
 
     val sorted: RDD[((String, String), Int)] = reduced.mapPartitions(it => {
-      it.toList.sortBy(_._2).reverse.take(2).iterator
+      it.toList.sortBy(_._2).reverse.take(3).iterator
     })
+
+
     val tuples = sorted.collect()
     tuples.foreach(println)
-
+    reduced.unpersist()
     sc.stop()
   }
 }

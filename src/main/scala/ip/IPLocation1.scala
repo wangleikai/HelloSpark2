@@ -26,6 +26,7 @@ object IPLocation1 {
       val ip =fields(1)
       val ipNum = TestIP.ip2Long(ip)
       //接受到driver端的广播变量的数据
+      //收集到的数据是放在内存中的
       val rulesInExecutor = broadcastRef.value
       val index = TestIP.binarySearch(rulesInExecutor,ipNum)
       var province = "未知"
