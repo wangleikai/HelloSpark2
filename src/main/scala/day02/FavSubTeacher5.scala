@@ -11,9 +11,9 @@ import scala.collection.mutable
   * @author WangLeiKai
   *         2018/9/27  18:53
   */
-object FavSubTeacher4 {
+object FavSubTeacher5 {
   def main(args: Array[String]): Unit = {
-    val conf: SparkConf = new SparkConf().setAppName("FavSubTeacher4").setMaster("local[*]")
+    val conf: SparkConf = new SparkConf().setAppName("FavSubTeacher5").setMaster("local[*]")
     val sc = new SparkContext(conf)
     val lines = sc.textFile("F:\\上课画图\\spark 02\\课件与代码\\teacher(1).log")
 
@@ -26,7 +26,7 @@ object FavSubTeacher4 {
     //取到所有的科目
     val subjects: Array[String] = subjectAndTeacher.map(_._1._1).distinct().collect()
 
-    val sbPartitioner: SubjectPartitioner2 = new SubjectPartitioner2(subjects)
+    val sbPartitioner: SubjectPartitioner3 = new SubjectPartitioner3(subjects)
 
     //reduceByKey方法  参数可以是分区器，如果没有的话  使用的是默认的
     val reduced: RDD[((String, String), Int)] = subjectAndTeacher.reduceByKey(sbPartitioner,_+_)
@@ -41,14 +41,7 @@ object FavSubTeacher4 {
 
     val grouped: RDD[(String, Iterable[(String, Int)])] = mapped.groupByKey()
     val retRDD:RDD[(String, Iterable[(String, Int)])] = grouped.map(tuple => {
-      var ts = new mutable.TreeSet[(String, Int)]()(new Ordering[(String, Int)]{
-        override def compare(x: (String, Int), y: (String, Int)): Int = {
-
-          val xField = x._2.toInt
-          val yField = y._2.toInt
-          -(xField - yField)
-        }
-      })
+      var ts = new mutable.TreeSet[(String, Int)]()(new MyOrdering())
       val subject = tuple._1
       val nameNums = tuple._2
       for(nameNum <- nameNums) {
@@ -62,14 +55,7 @@ object FavSubTeacher4 {
     })
 
 
-/*  object MyOrdering extends Ordering[(String, Int)]{
-      override def compare(x: (String, Int), y: (String, Int)): Int = {
 
-        val xField = x._2.toInt
-        val yField = y._2.toInt
-        xField - yField
-      }
-    }*/
 
     val tuples = retRDD.collect()
     tuples.foreach(println)
@@ -77,7 +63,7 @@ object FavSubTeacher4 {
     sc.stop()
   }
 }
-class SubjectPartitioner2(sbs: Array[String]) extends Partitioner{
+  class SubjectPartitioner3(sbs: Array[String]) extends Partitioner{
 
   //map里放的是科目和对应的分区号 0  1 2
   private val rules: mutable.HashMap[String, Int] = new mutable.HashMap[String,Int]()
@@ -99,5 +85,14 @@ class SubjectPartitioner2(sbs: Array[String]) extends Partitioner{
     rules(subject)
   }
 
+}
 
+//注意  该类要放在object 的外面
+class MyOrdering extends Ordering[(String, Int)]{
+  override def compare(x: (String, Int), y: (String, Int)): Int = {
+
+    val xField = x._2.toInt
+    val yField = y._2.toInt
+    xField - yField
+  }
 }

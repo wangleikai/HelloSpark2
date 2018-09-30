@@ -9,7 +9,7 @@ import org.apache.spark.{SparkConf, SparkContext}
   */
 object MapPartitionsDemo {
   def main(args: Array[String]): Unit = {
-    Logger.getLogger("org.apache.spark").setLevel(Level.OFF)
+
     val conf = new SparkConf().setAppName("MapPartitionsDemo")
     conf.setMaster("local[*]")
     val sc = new SparkContext(conf)
